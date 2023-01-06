@@ -1,0 +1,8 @@
+server:
+  error:
+    include-stacktrace: on_param
+
+logging:
+  level:
+    root: INFO
+    web: DEBUG
