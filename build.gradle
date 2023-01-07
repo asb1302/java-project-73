@@ -6,6 +6,7 @@ plugins {
 	id 'com.adarshr.test-logger' version '2.1.1'
 	id 'com.github.ben-manes.versions' version '0.38.0'
 	id 'jacoco'
+	id 'org.liquibase.gradle' version '2.0.4'
 }
 
 group = 'hexlet.code.javaproject73'
@@ -38,7 +39,17 @@ dependencies {
 			'io.jsonwebtoken:jjwt:0.9.1',
 			'com.querydsl:querydsl-core:5.0.0',
 			'com.querydsl:querydsl-jpa:5.0.0',
-			'com.rollbar:rollbar-spring-boot-webmvc:1.8.1'
+			'com.rollbar:rollbar-spring-boot-webmvc:1.8.1',
+			'org.liquibase:liquibase-core:4.6.1',
+			'com.querydsl:querydsl-core:5.0.0',
+			'com.querydsl:querydsl-jpa:5.0.0'
+	)
+
+	liquibaseRuntime(
+			sourceSets.main.output,
+			'org.liquibase:liquibase-core:4.6.1',
+			'org.liquibase.ext:liquibase-hibernate5:4.5.0',
+			'org.springframework.boot:spring-boot-starter-data-jpa'
 	)
 
 	runtimeOnly (
@@ -72,3 +83,21 @@ test {
 	useJUnitPlatform()
 }
 
+diffChangeLog {
+	dependsOn compileJava
+}
+
+liquibase {
+	activities {
+		main {
+			changeLogFile 'src/main/resources/db/changelog/changelog-master.xml'
+			url 'jdbc:h2:./taskManager'
+			username ''
+			password ''
+			referenceUrl 'hibernate:spring:hexlet.code.javaproject73.model.' +
+					// Указываем диалект
+					'?dialect=org.hibernate.dialect.H2Dialect' +
+					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
+		}
+	}
+}

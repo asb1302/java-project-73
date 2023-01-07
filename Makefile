@@ -14,10 +14,10 @@ start-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
-	./gradlew installDist
+	./gradlew clean installDist
 
 start-dist:
-	./build/install/app/bin/app
+	./build/install/java-project-73/bin/java-project-73
 
 lint:
 	./gradlew checkstyleMain checkstyleTest
