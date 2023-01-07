@@ -8,19 +8,12 @@ springdoc:
 
 spring:
   datasource:
-    username: ""
-    password: ""
-    url: "jdbc:h2:./taskManager"
+    username: "javaproject73"
+    password: "javaproject73"
+    url: "jdbc:postgresql://localhost:5411/javaproject73"
 
   jpa:
     show-sql: true
-
-  h2:
-    console:
-      enabled: true
-      path: /h2console/
-      settings:
-        web-allow-others: true
 
 logging:
   level:

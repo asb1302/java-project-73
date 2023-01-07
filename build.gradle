@@ -49,7 +49,8 @@ dependencies {
 			sourceSets.main.output,
 			'org.liquibase:liquibase-core:4.6.1',
 			'org.liquibase.ext:liquibase-hibernate5:4.5.0',
-			'org.springframework.boot:spring-boot-starter-data-jpa'
+			'org.springframework.boot:spring-boot-starter-data-jpa',
+			'org.postgresql:postgresql'
 	)
 
 	runtimeOnly (
@@ -94,8 +95,7 @@ liquibase {
 			url 'jdbc:h2:./taskManager'
 			username ''
 			password ''
-			referenceUrl 'hibernate:spring:hexlet.code.javaproject73.model.' +
-					// Указываем диалект
+			referenceUrl 'hibernate:spring:io.hexlet.javaspringblog.model.' +
 					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}

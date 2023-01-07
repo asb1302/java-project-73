@@ -1,0 +1,10 @@
+version: '3'
+services:
+  java-project-73-db-postgresql:
+    image: timescale/timescaledb:latest-pg13
+    environment:
+      - POSTGRES_DB=javaproject73
+      - POSTGRES_USER=javaproject73
+      - POSTGRES_PASSWORD=javaproject73
+    ports:
+      - 5411:5432

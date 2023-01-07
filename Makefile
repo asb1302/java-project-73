@@ -7,10 +7,14 @@ clean:
 build:
 	./gradlew clean build
 
-start:
+start: docker-db run-dev
+run-dev:
 	./gradlew bootRun --args='--spring.profiles.active=dev'
+docker-db:
+	docker-compose -f ./docker/postgresql.yml up -d --no-recreate
 
-start-prod:
+start-prod: run-prod
+run-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:

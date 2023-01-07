@@ -5,7 +5,7 @@
 
 # Менеджер задач
 
-[Демо](https://java-project-73-production-5c15.up.railway.app/).
+[Демо](https://java-project-73-production-5c15.up.railway.app/)
 
 
 ## Development
