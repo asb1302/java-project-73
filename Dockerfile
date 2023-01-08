@@ -6,4 +6,4 @@ COPY / .
 
 RUN gradle installDist
 
-CMD ./gradlew bootRun --args='--spring.profiles.active=prod'
+CMD ./build/install/java-project-73/bin/java-project-73
