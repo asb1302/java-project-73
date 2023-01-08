@@ -10,8 +10,8 @@ spring:
       enabled: false
 
   datasource:
-    username: ${PGUSER}
-    password: ${PGPASSWORD}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
     url: ${JDBC_DATABASE_URL}
 
   jpa:
