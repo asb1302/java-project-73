@@ -1,4 +1,4 @@
-package hexlet.code.javaproject73;
+package hexlet.code.javaproject73.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AppTests {
+class WelcomeControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    void testRootPage() throws Exception {
+    void testWelcomePage() throws Exception {
         MockHttpServletResponse response = mockMvc
-                .perform(get("/"))
+                .perform(get("/welcome"))
                 .andReturn()
                 .getResponse();
 
