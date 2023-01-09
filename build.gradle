@@ -54,7 +54,6 @@ dependencies {
 	)
 
 	runtimeOnly (
-			'com.h2database:h2:1.4.200',
 			'org.postgresql:postgresql:42.2.24'
 	)
 
@@ -92,11 +91,11 @@ liquibase {
 	activities {
 		main {
 			changeLogFile 'src/main/resources/db/changelog/changelog-master.xml'
-			url 'jdbc:h2:./taskManager'
-			username ''
-			password ''
+			url 'jdbc:postgresql://localhost:5411/javaproject73'
+			username 'javaproject73'
+			password 'javaproject73'
 			referenceUrl 'hibernate:spring:io.hexlet.javaspringblog.model.' +
-					'?dialect=org.hibernate.dialect.H2Dialect' +
+					'?dialect=org.hibernate.dialect.PostgreSQLDialect' +
 					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}
 	}
