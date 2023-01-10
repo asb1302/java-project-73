@@ -1,4 +1,4 @@
-package hexlet.code.javaproject73.controller.config;
+package hexlet.code.javaproject73.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
-import static hexlet.code.javaproject73.controller.config.SpringConfig.TEST_PROFILE;
+import static hexlet.code.javaproject73.config.SpringConfig.TEST_PROFILE;
 
 @Configuration
 @Profile(TEST_PROFILE)

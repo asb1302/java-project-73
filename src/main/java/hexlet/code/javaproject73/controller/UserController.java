@@ -5,6 +5,7 @@ import hexlet.code.javaproject73.model.User;
 import hexlet.code.javaproject73.repository.UserRepository;
 import hexlet.code.javaproject73.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,10 @@ public class UserController {
 
     private final UserService userService;
 
+    private static final String ONLY_OWNER_BY_ID = """
+            @userRepository.findById(#id).get().getEmail() == authentication.getName()
+        """;
+
     @GetMapping
     public List<User> getAll() {
         return userRepository.findAll()
@@ -51,11 +56,13 @@ public class UserController {
     }
 
     @PutMapping(ID)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public User update(@PathVariable final long id, @RequestBody @Valid final UserDto dto) {
         return userService.updateUser(id, dto);
     }
 
     @DeleteMapping(ID)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void delete(@PathVariable final long id) {
         userRepository.deleteById(id);
     }
