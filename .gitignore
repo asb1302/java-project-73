@@ -29,3 +29,5 @@ out/
 *.db
 .env
 derby.log
+node
+node_moudles

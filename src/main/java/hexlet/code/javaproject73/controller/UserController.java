@@ -4,6 +4,11 @@ import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
 import hexlet.code.javaproject73.repository.UserRepository;
 import hexlet.code.javaproject73.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +42,9 @@ public class UserController {
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
 
+    @ApiResponses(@ApiResponse(responseCode = "200", content =
+    @Content(schema = @Schema(implementation = User.class))
+    ))
     @GetMapping
     public List<User> getAll() {
         return userRepository.findAll()
@@ -44,11 +52,14 @@ public class UserController {
                 .toList();
     }
 
+    @ApiResponses(@ApiResponse(responseCode = "200"))
     @GetMapping(ID)
     public User getUserById(@PathVariable final Long id) {
         return userRepository.findById(id).get();
     }
 
+    @Operation(summary = "Create new user")
+    @ApiResponse(responseCode = "201", description = "User created")
     @PostMapping
     @ResponseStatus(CREATED)
     public User registerNew(@RequestBody @Valid final UserDto dto) {
