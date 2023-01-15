@@ -106,11 +106,11 @@ liquibase {
 	activities {
 		main {
 			changeLogFile 'src/main/resources/db/changelog/changelog-master.xml'
-			url 'jdbc:postgresql://localhost:5411/javaproject73'
-			username 'javaproject73'
-			password 'javaproject73'
+			url 'jdbc:h2:./taskManager'
+			username ''
+			password ''
 			referenceUrl 'hibernate:spring:io.hexlet.javaspringblog.model.' +
-					'?dialect=org.hibernate.dialect.PostgreSQLDialect' +
+					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}
 	}

@@ -4,9 +4,9 @@ server:
 
 spring:
   datasource:
-    username: "javaproject73"
-    password: "javaproject73"
-    url: "jdbc:postgresql://localhost:5411/javaproject73"
+    username: ""
+    password: ""
+    url: "jdbc:h2:./taskManager"
 
   jpa:
     show-sql: true
