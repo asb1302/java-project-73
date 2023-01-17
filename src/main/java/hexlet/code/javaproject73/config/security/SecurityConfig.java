@@ -1,6 +1,7 @@
 package hexlet.code.javaproject73.config.security;
 
 import hexlet.code.javaproject73.component.JWTHelper;
+import hexlet.code.javaproject73.controller.UserController;
 import hexlet.code.javaproject73.filter.JWTAuthenticationFilter;
 import hexlet.code.javaproject73.filter.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,17 +20,19 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
 import java.util.List;
 
 import static hexlet.code.javaproject73.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+
     public static final String LOGIN = "/login";
 
     public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
@@ -89,5 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .logout().disable();
+
+        http.headers().frameOptions().disable();
     }
 }

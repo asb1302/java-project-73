@@ -12,17 +12,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
 
 import static hexlet.code.javaproject73.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Component
 public class TestUtils {
-
+    public static final String BASE_URL = "/api";
     public static final String TEST_USERNAME = "email@email.com";
     public static final String TEST_USERNAME_2 = "email2@email.com";
 
@@ -55,7 +55,7 @@ public class TestUtils {
     }
 
     public ResultActions regUser(final UserDto dto) throws Exception {
-        final var request = post(USER_CONTROLLER_PATH)
+        final var request = MockMvcRequestBuilders.post(BASE_URL + USER_CONTROLLER_PATH)
                 .content(asJson(dto))
                 .contentType(APPLICATION_JSON);
 

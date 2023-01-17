@@ -3,6 +3,7 @@ package hexlet.code.javaproject73.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
+import hexlet.code.javaproject73.config.security.SecurityConfig;
 import hexlet.code.javaproject73.dto.LoginDto;
 import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import hexlet.code.javaproject73.utils.TestUtils;
 
@@ -24,6 +26,7 @@ import static hexlet.code.javaproject73.controller.UserController.USER_CONTROLLE
 import static hexlet.code.javaproject73.utils.TestUtils.fromJson;
 import static hexlet.code.javaproject73.utils.TestUtils.asJson;
 import static hexlet.code.javaproject73.utils.TestUtils.TEST_USERNAME_2;
+import static hexlet.code.javaproject73.utils.TestUtils.BASE_URL;
 import static hexlet.code.javaproject73.utils.TestUtils.TEST_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +62,9 @@ public class UserControllerTest {
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
-        final var loginRequest = post(LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
+        final var loginRequest =
+                MockMvcRequestBuilders.post(BASE_URL + SecurityConfig.LOGIN).content(asJson(loginDto))
+                        .contentType(APPLICATION_JSON);
         utils.perform(loginRequest).andExpect(status().isOk());
     }
 
@@ -69,14 +74,14 @@ public class UserControllerTest {
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
-        final var loginRequest = post(LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
+        final var loginRequest = post(BASE_URL + LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
         utils.perform(loginRequest).andExpect(status().isUnauthorized());
     }
 
     @Test
     void getAllUsers() throws Exception {
         MockHttpServletResponse response = mockMvc
-                .perform(get(USER_CONTROLLER_PATH))
+                .perform(get(BASE_URL + USER_CONTROLLER_PATH))
                 .andReturn()
                 .getResponse();
 
@@ -97,7 +102,7 @@ public class UserControllerTest {
     public void getUserById() throws Exception {
         final User expectedUser = userRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(USER_CONTROLLER_PATH + ID, expectedUser.getId()),
+                        get(BASE_URL + USER_CONTROLLER_PATH + ID, expectedUser.getId()),
                         expectedUser.getEmail()
                 ).andExpect(status().isOk())
                 .andReturn()
@@ -140,7 +145,7 @@ public class UserControllerTest {
 
         final var userDto = new UserDto(TEST_USERNAME_2, "new name", "new last name", "new pwd");
 
-        final var updateRequest = put(USER_CONTROLLER_PATH + ID, userId)
+        final var updateRequest = put(BASE_URL + USER_CONTROLLER_PATH + ID, userId)
                 .content(asJson(userDto))
                 .contentType(APPLICATION_JSON);
 
@@ -157,7 +162,7 @@ public class UserControllerTest {
 
         final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
 
-        utils.perform(delete(USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME)
                 .andExpect(status().isOk());
 
         assertEquals(2, userRepository.count());
@@ -175,7 +180,7 @@ public class UserControllerTest {
 
         final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
 
-        utils.perform(delete(USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME_2)
+        utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME_2)
                 .andExpect(status().isForbidden());
 
         assertEquals(4, userRepository.count());

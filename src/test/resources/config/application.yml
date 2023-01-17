@@ -1,8 +1,13 @@
-base-url: ""
+base-url: "/api"
 
 spring:
+  application:
+    name: taskManager
+
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: create-drop
 
   liquibase:
     enabled: true

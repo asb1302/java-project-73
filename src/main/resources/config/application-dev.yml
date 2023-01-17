@@ -11,6 +11,13 @@ spring:
   jpa:
     show-sql: true
 
+  h2:
+    console:
+      enabled: true
+      path: /h2console/
+      settings:
+        web-allow-others: true
+
 logging:
   level:
     root: INFO
