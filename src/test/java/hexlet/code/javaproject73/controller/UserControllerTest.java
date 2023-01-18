@@ -1,18 +1,16 @@
 package hexlet.code.javaproject73.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.api.DBRider;
 import hexlet.code.javaproject73.config.security.SecurityConfig;
 import hexlet.code.javaproject73.dto.LoginDto;
 import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
 import hexlet.code.javaproject73.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,15 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DBRider
-@DataSet("users.yml")
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -54,6 +49,11 @@ public class UserControllerTest {
 
     @Autowired
     private TestUtils utils;
+
+    @BeforeEach
+    public void clear() {
+        utils.tearDown();
+    }
 
     @Test
     public void login() throws Exception {
@@ -79,30 +79,28 @@ public class UserControllerTest {
     }
 
     @Test
-    void getAllUsers() throws Exception {
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASE_URL + USER_CONTROLLER_PATH))
+    public void getAllUsers() throws Exception {
+        utils.regDefaultUser();
+        final var response
+                = utils.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + UserController.USER_CONTROLLER_PATH))
+                .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
-
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getContentAsString())
-                .contains("firstName1", "lastName1", "email1@gmail.com", "2023-01-01T00:00:01.000+00:00");
-        assertThat(response.getContentAsString())
-                .contains("firstName2", "lastName2", "email2@gmail.com", "2023-01-01T00:00:02.000+00:00");
-
         final List<User> users = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-
-        assertThat(users).hasSize(2);
+        assertThat(users).hasSize(1);
     }
 
     @Test
     public void getUserById() throws Exception {
+        utils.regDefaultUser();
         final User expectedUser = userRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(BASE_URL + USER_CONTROLLER_PATH + ID, expectedUser.getId()),
+                        MockMvcRequestBuilders
+                                .get(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID,
+                                        expectedUser.getId()),
                         expectedUser.getEmail()
                 ).andExpect(status().isOk())
                 .andReturn()
@@ -119,22 +117,22 @@ public class UserControllerTest {
 
     @Test
     public void registration() throws Exception {
-        assertEquals(2, userRepository.count());
+        assertEquals(0, userRepository.count());
         utils.regDefaultUser().andExpect(status().isCreated());
-        assertEquals(3, userRepository.count());
+        assertEquals(1, userRepository.count());
     }
 
     @Test
     public void registrationWithInvalidData() throws Exception {
-        assertEquals(2, userRepository.count());
+        assertEquals(0, userRepository.count());
         UserDto dto = new UserDto(
                 TEST_USERNAME,
                 "fname",
                 "lname",
-                "pw" // Должно быть минимум 3 симовола
+                "pw" // Должно быть минимум 3 символа
         );
         utils.regUser(dto).andExpect(status().isUnprocessableEntity());
-        assertEquals(2, userRepository.count());
+        assertEquals(0, userRepository.count());
     }
 
     @Test
@@ -165,7 +163,7 @@ public class UserControllerTest {
         utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME)
                 .andExpect(status().isOk());
 
-        assertEquals(2, userRepository.count());
+        assertEquals(0, userRepository.count());
     }
 
     @Test
@@ -183,6 +181,6 @@ public class UserControllerTest {
         utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME_2)
                 .andExpect(status().isForbidden());
 
-        assertEquals(4, userRepository.count());
+        assertEquals(2, userRepository.count());
     }
 }

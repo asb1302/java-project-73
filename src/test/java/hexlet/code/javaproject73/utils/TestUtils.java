@@ -7,6 +7,7 @@ import hexlet.code.javaproject73.component.JWTHelper;
 import hexlet.code.javaproject73.dto.TaskStatusDto;
 import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
+import hexlet.code.javaproject73.repository.TaskStatusRepository;
 import hexlet.code.javaproject73.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,15 @@ public class TestUtils {
     private UserRepository userRepository;
 
     @Autowired
+    private TaskStatusRepository taskStatusRepository;
+
+    @Autowired
     private JWTHelper jwtHelper;
+
+    public void tearDown() {
+        taskStatusRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     public User getUserByEmail(final String email) {
         return userRepository.findByEmail(email).get();

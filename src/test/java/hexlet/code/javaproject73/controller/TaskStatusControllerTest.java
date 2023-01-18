@@ -1,13 +1,12 @@
 package hexlet.code.javaproject73.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.api.DBRider;
 import hexlet.code.javaproject73.config.SpringConfig;
 import hexlet.code.javaproject73.dto.TaskStatusDto;
 import hexlet.code.javaproject73.model.TaskStatus;
 import hexlet.code.javaproject73.repository.TaskStatusRepository;
 import hexlet.code.javaproject73.utils.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(SpringConfig.TEST_PROFILE)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfig.class)
-@DBRider
-@DataSet("task_statuses.yml")
 public class TaskStatusControllerTest {
     @Autowired
     private TaskStatusRepository taskStatusRepository;
@@ -51,12 +48,17 @@ public class TaskStatusControllerTest {
     @Autowired
     private TestUtils utils;
 
+    @BeforeEach
+    public void clear() {
+        utils.tearDown();
+    }
+
     @Test
     public void registration() throws Exception {
-        assertEquals(2, taskStatusRepository.count());
+        assertEquals(0, taskStatusRepository.count());
         utils.regDefaultUser();
         utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
-        assertEquals(3, taskStatusRepository.count());
+        assertEquals(1, taskStatusRepository.count());
     }
 
     @Test
@@ -64,18 +66,19 @@ public class TaskStatusControllerTest {
         utils.regDefaultUser();
         utils.regDefaultStatus(TEST_USERNAME);
         final Long statusId = taskStatusRepository.findAll().get(0).getId();
-        assertEquals(3, taskStatusRepository.count());
+        assertEquals(1, taskStatusRepository.count());
 
         utils.perform(delete(BASE_URL + TASK_STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
                 .andExpect(status().isOk());
 
-        assertEquals(2, taskStatusRepository.count());
+        assertEquals(0, taskStatusRepository.count());
     }
 
     @Test
     public void getTaskStatusById() throws Exception {
         utils.regDefaultUser();
-        assertEquals(2, taskStatusRepository.count());
+        utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
+        assertEquals(1, taskStatusRepository.count());
 
         final TaskStatus expectedStatus = taskStatusRepository.findAll().get(0);
 
@@ -94,6 +97,7 @@ public class TaskStatusControllerTest {
     @Test
     public void getAllTaskStatuses() throws Exception {
         utils.regDefaultUser();
+        utils.regDefaultStatus(TEST_USERNAME);
         final var response = utils.perform(
                         get(BASE_URL + TASK_STATUS_CONTROLLER_PATH), TEST_USERNAME)
                 .andExpect(status().isOk())
@@ -102,17 +106,11 @@ public class TaskStatusControllerTest {
 
         final List<TaskStatus> taskStatuses = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-        assertThat(taskStatuses).hasSize(2);
-        assertThat(response.getContentAsString())
-                .contains("status_1", "2023-01-01T00:00:01.000+00:00");
-        assertThat(response.getContentAsString())
-                .contains("status_2", "2023-01-02T00:00:01.000+00:00");
+        assertThat(taskStatuses).hasSize(1);
     }
 
     @Test
     public void updateStatusById() throws Exception {
-        taskStatusRepository.deleteAll();
-
         utils.regDefaultUser();
         utils.regDefaultStatus(TEST_USERNAME);
 
@@ -152,6 +150,6 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
         utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isUnprocessableEntity());
 
-        assertEquals(3, taskStatusRepository.count());
+        assertEquals(1, taskStatusRepository.count());
     }
 }
