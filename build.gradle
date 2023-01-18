@@ -121,7 +121,7 @@ liquibase {
 			url 'jdbc:h2:./taskManager'
 			username ''
 			password ''
-			referenceUrl 'hibernate:spring:io.hexlet.javaspringblog.model.' +
+			referenceUrl 'hibernate:spring:hexlet.code.javaproject73.model.' +
 					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}

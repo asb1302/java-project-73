@@ -1,7 +1,6 @@
 package hexlet.code.javaproject73.config.security;
 
 import hexlet.code.javaproject73.component.JWTHelper;
-import hexlet.code.javaproject73.controller.UserController;
 import hexlet.code.javaproject73.filter.JWTAuthenticationFilter;
 import hexlet.code.javaproject73.filter.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;

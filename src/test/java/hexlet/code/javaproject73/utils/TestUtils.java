@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.javaproject73.component.JWTHelper;
+import hexlet.code.javaproject73.dto.TaskStatusDto;
 import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
 import hexlet.code.javaproject73.repository.UserRepository;
@@ -16,9 +17,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
 
+import static hexlet.code.javaproject73.controller.TaskStatusController.TASK_STATUS_CONTROLLER_PATH;
 import static hexlet.code.javaproject73.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Component
 public class TestUtils {
@@ -26,11 +29,18 @@ public class TestUtils {
     public static final String TEST_USERNAME = "email@email.com";
     public static final String TEST_USERNAME_2 = "email2@email.com";
 
+    public static final String TEST_STATUS_NAME = "status";
+    public static final String TEST_STATUS_NAME_2 = "status_2";
+
     private final UserDto testRegistrationDto = new UserDto(
             TEST_USERNAME,
             "fname",
             "lname",
             "pwd"
+    );
+
+    private final TaskStatusDto testStatusDto = new TaskStatusDto(
+            TEST_STATUS_NAME
     );
 
     public UserDto getTestRegistrationDto() {
@@ -54,12 +64,24 @@ public class TestUtils {
         return regUser(testRegistrationDto);
     }
 
+    public ResultActions regDefaultStatus(final String byUser) throws Exception {
+        return regStatus(testStatusDto, byUser);
+    }
+
     public ResultActions regUser(final UserDto dto) throws Exception {
         final var request = MockMvcRequestBuilders.post(BASE_URL + USER_CONTROLLER_PATH)
                 .content(asJson(dto))
                 .contentType(APPLICATION_JSON);
 
         return perform(request);
+    }
+
+    public ResultActions regStatus(final TaskStatusDto dto, final String byUser) throws Exception {
+        final var request = post(BASE_URL + TASK_STATUS_CONTROLLER_PATH)
+                .content(asJson(dto))
+                .contentType(APPLICATION_JSON);
+
+        return perform(request, byUser);
     }
 
     public ResultActions perform(final MockHttpServletRequestBuilder request, final String byUser) throws Exception {
