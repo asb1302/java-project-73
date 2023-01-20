@@ -9,5 +9,5 @@ public interface UserService {
 
     User updateUser(long id, UserDto userDto);
 
-    String getCurrentUserName();
+    User getCurrentUser();
 }

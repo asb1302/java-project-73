@@ -27,4 +27,29 @@
     <changeSet author="lab (generated)" id="1674021827582-3">
         <addUniqueConstraint columnNames="name" constraintName="UC_TASK_STATUSESNAME_COL" tableName="task_statuses"/>
     </changeSet>
+    <changeSet author="lab (generated)" id="1674109356211-2">
+        <createTable tableName="tasks">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tasksPK"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="author_id" type="BIGINT"/>
+            <column name="executor_id" type="BIGINT"/>
+            <column name="task_status_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="lab (generated)" id="1674109356211-4">
+        <addUniqueConstraint columnNames="name" constraintName="UC_TASKSNAME_COL" tableName="tasks"/>
+    </changeSet>
+    <changeSet author="lab (generated)" id="1674109356211-7">
+        <addForeignKeyConstraint baseColumnNames="task_status_id" baseTableName="tasks" constraintName="FK7xndk7y2uk29wdu734xyutbqe" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="task_statuses" validate="true"/>
+    </changeSet>
+    <changeSet author="lab (generated)" id="1674109356211-8">
+        <addForeignKeyConstraint baseColumnNames="executor_id" baseTableName="tasks" constraintName="FKbrg922bkqn5m7212jsqjg6ioe" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="lab (generated)" id="1674109356211-9">
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="tasks" constraintName="FKhods8r8oyyx7tuj3c91ki2sk1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
 </databaseChangeLog>
