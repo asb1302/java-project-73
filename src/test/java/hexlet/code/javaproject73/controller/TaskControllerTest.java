@@ -105,7 +105,8 @@ public class TaskControllerTest {
                 "newTask",
                 "newDescription",
                 task.getTaskStatus().getId(),
-                task.getExecutor().getId()
+                task.getExecutor().getId(),
+                null
         );
 
         final var updateRequest = put(BASE_URL + TASK_CONTROLLER_PATH + ID,

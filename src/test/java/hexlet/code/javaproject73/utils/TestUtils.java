@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.javaproject73.component.JWTHelper;
+import hexlet.code.javaproject73.dto.LabelDto;
 import hexlet.code.javaproject73.dto.TaskDto;
 import hexlet.code.javaproject73.dto.TaskStatusDto;
 import hexlet.code.javaproject73.dto.UserDto;
+import hexlet.code.javaproject73.model.Label;
 import hexlet.code.javaproject73.model.TaskStatus;
 import hexlet.code.javaproject73.model.User;
+import hexlet.code.javaproject73.repository.LabelRepository;
 import hexlet.code.javaproject73.repository.TaskRepository;
 import hexlet.code.javaproject73.repository.TaskStatusRepository;
 import hexlet.code.javaproject73.repository.UserRepository;
@@ -20,7 +23,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
+import java.util.Set;
 
+import static hexlet.code.javaproject73.controller.LabelController.LABEL_CONTROLLER_PATH;
 import static hexlet.code.javaproject73.controller.TaskController.TASK_CONTROLLER_PATH;
 import static hexlet.code.javaproject73.controller.TaskStatusController.TASK_STATUS_CONTROLLER_PATH;
 import static hexlet.code.javaproject73.controller.UserController.USER_CONTROLLER_PATH;
@@ -44,8 +49,18 @@ public class TestUtils {
             "pwd"
     );
 
+    public static final String TEST_LABEL = "label1";
+    public static final String TEST_LABEL_2 = "label2";
+
     private final TaskStatusDto testStatusDto = new TaskStatusDto(
             TEST_STATUS_NAME
+    );
+
+    public static final LabelDto LABEL_DTO = new LabelDto(
+            TEST_LABEL
+    );
+    public static final LabelDto LABEL_DTO_2 = new LabelDto(
+            TEST_LABEL_2
     );
 
     public UserDto getTestRegistrationDto() {
@@ -64,11 +79,15 @@ public class TestUtils {
     private TaskRepository taskRepository;
 
     @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private JWTHelper jwtHelper;
 
     public void tearDown() {
         taskRepository.deleteAll();
         taskStatusRepository.deleteAll();
+        labelRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -86,16 +105,23 @@ public class TestUtils {
 
     public ResultActions regDefaultTask(final String byUser) throws Exception {
         regDefaultUser();
+        regDefaultLabel(TEST_USERNAME);
         regDefaultStatus(TEST_USERNAME);
         final User user = userRepository.findAll().get(0);
         final TaskStatus taskStatus = taskStatusRepository.findAll().get(0);
+        final Label label = labelRepository.findAll().get(0);
         final TaskDto testRegTaskDto = new TaskDto(
                 "task",
                 "description",
                 taskStatus.getId(),
-                user.getId()
+                user.getId(),
+                Set.of(label.getId())
         );
         return regTask(testRegTaskDto, byUser);
+    }
+
+    public ResultActions regDefaultLabel(final String byUser) throws Exception {
+        return regLabel(LABEL_DTO, byUser);
     }
 
     public ResultActions regUser(final UserDto dto) throws Exception {
@@ -119,6 +145,14 @@ public class TestUtils {
                 .content(asJson(dto))
                 .contentType(APPLICATION_JSON);
 
+        return perform(request, byUser);
+    }
+
+    public ResultActions regLabel(final LabelDto labelDto, final String byUser) throws  Exception {
+        final var request
+                = MockMvcRequestBuilders.post(BASE_URL + LABEL_CONTROLLER_PATH)
+                .content((asJson(labelDto)))
+                .contentType(APPLICATION_JSON);
         return perform(request, byUser);
     }
 
