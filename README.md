@@ -6,6 +6,7 @@
 # Менеджер задач
 
 [Демо](https://java-project-73-production-5c15.up.railway.app/)
+[Api doc](https://java-project-73-production-5c15.up.railway.app/swagger-ui.html)
 
 
 ## Development
