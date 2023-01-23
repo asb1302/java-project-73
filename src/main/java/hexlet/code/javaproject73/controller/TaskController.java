@@ -1,5 +1,6 @@
 package hexlet.code.javaproject73.controller;
 
+import com.querydsl.core.types.Predicate;
 import hexlet.code.javaproject73.dto.TaskDto;
 import hexlet.code.javaproject73.model.Task;
 import hexlet.code.javaproject73.repository.TaskRepository;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,10 +58,9 @@ public class TaskController {
     @Schema(implementation = Task.class))
     ))
     @GetMapping
-    public List<Task> getAll() throws Exception {
-        return taskRepository.findAll()
-                .stream()
-                .toList();
+    public Iterable<Task> getAllTasks(@QuerydslPredicate final Predicate predicate) {
+        return predicate == null ? taskRepository.findAll() : taskRepository.findAll(predicate);
+
     }
 
     @Operation(summary = "Create a new task")
