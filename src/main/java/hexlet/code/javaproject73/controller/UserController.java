@@ -1,5 +1,6 @@
 package hexlet.code.javaproject73.controller;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.javaproject73.dto.UserDto;
 import hexlet.code.javaproject73.model.User;
 import hexlet.code.javaproject73.repository.UserRepository;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,8 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    private final Rollbar rollbar;
+
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
@@ -62,6 +66,8 @@ public class UserController {
     ))
     @GetMapping
     public List<User> getAll() throws Exception {
+        rollbar.info("Here is some test info message");
+
         return userRepository.findAll()
                 .stream()
                 .toList();
