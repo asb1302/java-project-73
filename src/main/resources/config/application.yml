@@ -3,6 +3,8 @@ server:
 
 base-url: /api
 
+rollbar_token: ${ROLLBAR_TOKEN}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

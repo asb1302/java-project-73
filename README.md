@@ -5,15 +5,28 @@
 
 # Менеджер задач
 
-[Демо](https://java-project-73-production-5c15.up.railway.app/)
-[Api doc](https://java-project-73-production-5c15.up.railway.app/swagger-ui.html)
+* [Демо](https://java-project-73-production-5c15.up.railway.app/)
+* [Api doc](https://java-project-73-production-5c15.up.railway.app/swagger-ui.html)
 
 
 ## Development
 
+Для локального запуска необходимо установить:
+
+* Java 17
+* Gradle
+* Make
+
+### Run
+
 ```bash
-# http://localhost:5000
 make start
 
+# http://localhost:5000
+```
+
+### Tesing
+
+```
 make test
 ```
