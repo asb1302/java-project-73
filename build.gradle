@@ -17,11 +17,12 @@ plugins {
 	id 'org.siouan.frontend-jdk11' version '6.0.0'
 }
 
-group = 'hexlet.code.app'
+group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 application {
-	mainClass = 'hexlet.code.app.App'
+	mainClass = 'hexlet.code.AppApplication'
 }
 
 repositories {
@@ -82,12 +83,12 @@ dependencies {
 }
 
 wrapper {
-	gradleVersion = '7.3'
+	gradleVersion = '7.4.2'
 	distributionType = Wrapper.DistributionType.ALL
 }
 
 compileJava {
-	options.release = 16
+	options.release = 17
 	options.encoding = 'UTF-8'
 }
 
@@ -121,7 +122,7 @@ liquibase {
 			url 'jdbc:h2:./taskManager'
 			username ''
 			password ''
-			referenceUrl 'hibernate:spring:hexlet.code.app.model.' +
+			referenceUrl 'hibernate:spring:hexlet.code.model.' +
 					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
 		}
