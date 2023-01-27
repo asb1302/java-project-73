@@ -32,6 +32,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) {
+        String authTokenStr = getAuthTokenStr(request).orElse(null);
+
+        if (authTokenStr != null) {
+            return true;
+        }
+
         if (getAuthToken(request).isEmpty()) {
             return true;
         }
@@ -61,11 +67,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> getAuthToken(final HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(AUTHORIZATION))
-                .map(header -> header.replaceFirst("^" + BEARER, ""))
-                .map(String::trim)
+        return this.getAuthTokenStr(request)
                 .map(jwtHelper::verify)
                 .map(claims -> claims.get(SPRING_SECURITY_FORM_USERNAME_KEY))
                 .map(Object::toString);
+    }
+
+    private Optional<String> getAuthTokenStr(final HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(AUTHORIZATION))
+                .map(header -> header.replaceFirst("^" + BEARER, ""))
+                .map(String::trim);
     }
 }
