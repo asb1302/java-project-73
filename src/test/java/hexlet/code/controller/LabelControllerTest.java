@@ -20,7 +20,6 @@ import java.util.List;
 import static hexlet.code.utils.TestUtils.BASE_URL;
 import static hexlet.code.utils.TestUtils.TEST_USERNAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -132,12 +131,8 @@ class LabelControllerTest {
         utils.regDefaultUser();
         utils.regDefaultLabel(TEST_USERNAME);
         final Label expectedLabel = labelRepository.findAll().get(0);
-        Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + LABEL_CONTROLLER_PATH + ID,
-                        expectedLabel.getId()))
-        );
-        String message = exception.getMessage();
-        assertTrue(message.contains("No value present"));
+        utils.perform(get(BASE_URL + LABEL_CONTROLLER_PATH + ID,
+                expectedLabel.getId())).andExpect(status().isForbidden());
     }
 
     @Test

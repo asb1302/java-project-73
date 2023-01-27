@@ -23,7 +23,6 @@ import static hexlet.code.utils.TestUtils.BASE_URL;
 import static hexlet.code.utils.TestUtils.TEST_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -136,12 +135,8 @@ public class TaskControllerTest {
     public void getTaskByIdFails() throws Exception {
         utils.regDefaultTask(TEST_USERNAME);
         final Task expectedTask = taskRepository.findAll().get(0);
-        Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID,
-                        expectedTask.getId()))
-        );
-        String message = exception.getMessage();
-        assertTrue(message.contains("No value present"));
+        utils.perform(get(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID,
+                expectedTask.getId())).andExpect(status().isForbidden());
     }
 
     @Test

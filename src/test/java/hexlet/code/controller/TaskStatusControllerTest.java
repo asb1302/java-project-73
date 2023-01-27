@@ -28,7 +28,6 @@ import static hexlet.code.utils.TestUtils.TEST_STATUS_NAME_2;
 import static hexlet.code.utils.TestUtils.fromJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -136,12 +135,8 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME);
         final TaskStatus expectedStatus = taskStatusRepository.findAll().get(0);
 
-        Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + TASK_STATUS_CONTROLLER_PATH + ID,
-                        expectedStatus.getId()))
-        );
-        String message = exception.getMessage();
-        assertTrue(message.contains("No value present"));
+        utils.perform(get(BASE_URL + TASK_STATUS_CONTROLLER_PATH + ID,
+                expectedStatus.getId())).andExpect(status().isForbidden());
     }
 
     @Test

@@ -187,4 +187,15 @@ public class UserControllerTest {
 
         assertEquals(2, userRepository.count());
     }
+
+    @Test
+    public void deleteUserWhenUnauthorized() throws Exception {
+        utils.regDefaultUser();
+
+        final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
+
+        utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId)).andExpect(status().isForbidden());
+
+        assertEquals(1, userRepository.count());
+    }
 }

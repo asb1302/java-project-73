@@ -32,6 +32,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) {
+        if (getAuthToken(request).isEmpty()) {
+            return true;
+        }
+
         return publicUrls.matches(request);
     }
 
@@ -40,15 +44,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
 
-        final var authToken = Optional.ofNullable(request.getHeader(AUTHORIZATION))
-                .map(header -> header.replaceFirst("^" + BEARER, ""))
-                .map(String::trim)
-                .map(jwtHelper::verify)
-                .map(claims -> claims.get(SPRING_SECURITY_FORM_USERNAME_KEY))
-                .map(Object::toString)
+        final var authToken = getAuthToken(request)
                 .map(this::buildAuthToken)
                 .orElseThrow();
-
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
@@ -60,5 +58,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 null,
                 DEFAULT_AUTHORITIES
         );
+    }
+
+    private Optional<String> getAuthToken(final HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(AUTHORIZATION))
+                .map(header -> header.replaceFirst("^" + BEARER, ""))
+                .map(String::trim)
+                .map(jwtHelper::verify)
+                .map(claims -> claims.get(SPRING_SECURITY_FORM_USERNAME_KEY))
+                .map(Object::toString);
     }
 }
