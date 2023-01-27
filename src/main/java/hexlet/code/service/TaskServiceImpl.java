@@ -5,11 +5,15 @@ import hexlet.code.model.Label;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.model.User;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
+import hexlet.code.repository.TaskStatusRepository;
+import hexlet.code.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -19,9 +23,14 @@ import java.util.stream.Collectors;
 @Transactional
 @AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
-
     private TaskRepository taskRepository;
     private final UserService userService;
+
+    private final TaskStatusRepository taskStatusRepository;
+
+    private final UserRepository userRepository;
+
+    private final LabelRepository labelRepository;
 
     @Override
     public Task createNewTask(TaskDto taskDto) {
@@ -31,9 +40,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(TaskDto taskDto, long id) {
-        final Task taskToUpdate = fromDto(taskDto);
-        taskToUpdate.setId(id);
-        return taskRepository.save(taskToUpdate);
+        final Task updateTask = taskRepository.findById(id).get();
+        final User author = userService.getCurrentUser();
+
+        updateTask.setName(taskDto.getName());
+        updateTask.setAuthor(author);
+        updateTask.setExecutor(taskDto.getExecutorId() == null ? null : userRepository
+                .findById(taskDto.getExecutorId()).orElse(null));
+        updateTask.setTaskStatus(taskStatusRepository.findById(taskDto.getTaskStatusId()).get());
+        updateTask.setDescription(taskDto.getDescription());
+        updateTask.setLabels(taskDto.getLabelIds() == null ? null : addLabels(taskDto.getLabelIds()));
+
+        return taskRepository.save(updateTask);
     }
 
     private Task fromDto(final TaskDto dto) {
@@ -59,5 +77,14 @@ public class TaskServiceImpl implements TaskService {
                 .description(dto.getDescription())
                 .labels(labels)
                 .build();
+    }
+
+    private Set<Label> addLabels(Set<Long> labelIds) {
+        Set<Label> labels = new HashSet<>();
+        for (Long id : labelIds) {
+            Label label = labelRepository.findById(id).get();
+            labels.add(label);
+        }
+        return labels;
     }
 }

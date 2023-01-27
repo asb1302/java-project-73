@@ -1,6 +1,5 @@
 package hexlet.code.controller;
 
-import com.rollbar.notifier.Rollbar;
 import hexlet.code.dto.UserDto;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
@@ -40,8 +39,6 @@ public class UserController {
     private final UserService userService;
 
     private final UserRepository userRepository;
-
-    private final Rollbar rollbar;
 
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
